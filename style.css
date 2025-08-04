@@ -1,0 +1,531 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8fafc;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* 全局动画定义 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes successPulse {
+    0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(59, 130, 246, 0.2);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+.file-drop-zone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 200px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    padding: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 20px -6px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(4px);
+}
+
+.file-drop-zone:hover {
+    background-color: rgba(241, 245, 249, 0.8);
+    border-color: #3b82f6;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15);
+}
+
+.file-drop-zone.drag-over {
+    border-style: solid;
+    border-color: #2563eb;
+    background-color: rgba(239, 246, 255, 0.9);
+    transform: scale(1.03);
+    box-shadow: 0 15px 30px -10px rgba(37, 99, 235, 0.2);
+}
+
+.file-drop-zone.file-selected {
+    border-color: #22c55e;
+    border-style: solid;
+    background-color: rgba(220, 252, 231, 0.8);
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+}
+
+.file-drop-zone.file-selected:hover {
+    background-color: rgba(187, 247, 208, 0.9);
+}
+
+.file-drop-zone.processing {
+    animation: pulse 1.5s infinite;
+}
+
+.file-drop-zone.success-animation {
+    animation: successPulse 0.8s;
+}
+
+.generate-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 2.75rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #3b82f6, #0ea5e9, #06b6d4);
+    border: none;
+    border-radius: 9999px;
+    box-shadow: 0 6px 18px 0 rgba(59, 130, 246, 0.35);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.generate-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #2563eb, #0891b2, #0d9488);
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.4s ease;
+}
+
+.generate-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.15);
+    transform: translate(-50%, -50%) rotate(30deg);
+    transition: all 0.6s ease;
+    z-index: -1;
+    opacity: 0;
+}
+
+.generate-button:hover::after {
+    opacity: 1;
+    width: 120%;
+    height: 300%;
+}
+
+.generate-button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5);
+}
+
+.generate-button:hover::before {
+    opacity: 1;
+}
+
+.generate-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 12px 0 rgba(59, 130, 246, 0.35);
+}
+
+.generate-button:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.generate-button:disabled::before,
+.generate-button:disabled::after {
+    display: none;
+}
+
+.generate-button.ready {
+    background: linear-gradient(135deg, #2563eb, #0891b2, #0d9488);
+    box-shadow: 0 8px 20px -5px rgba(37, 99, 235, 0.4);
+    animation: float 3s ease-in-out infinite;
+}
+
+#status-area {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(203, 213, 225, 0.5);
+}
+
+#status-area a {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+    color: white;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 15px -5px rgba(59, 130, 246, 0.4);
+}
+
+#status-area a:hover {
+    background: linear-gradient(135deg, #2563eb, #0891b2);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.5);
+}
+
+#status-area a i {
+    margin-right: 0.5rem;
+    animation: bounce 1.5s infinite;
+}
+
+/* 标题动画效果 */
+h1 {
+    display: inline-block;
+    position: relative;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background: linear-gradient(90deg, #3b82f6, #10b981);
+    transform-origin: bottom right;
+    transition: transform 0.3s ease-out;
+    border-radius: 1px;
+}
+
+h1:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+/* 增强卡片效果 */
+main > div {
+    backdrop-filter: blur(10px);
+}
+
+/* 优化按钮图标动画 */
+.generate-button i {
+    transition: transform 0.3s ease;
+}
+
+.generate-button:hover i {
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* 增强警告区域 */
+.bg-amber-50 {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+}
+
+/* 响应式优化 */
+@media (max-width: 640px) {
+    .file-drop-zone {
+        height: 160px;
+    }
+    
+    .generate-button {
+        padding: 0.85rem 2.25rem;
+        font-size: 1rem;
+    }
+    
+    #status-area a {
+        padding: 0.65rem 1.25rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* 下载按钮动画 */
+@keyframes downloadPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.download-button {
+    animation: downloadPulse 2s infinite;
+}
+
+/* 状态文本样式 */
+#status-text {
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 12px -6px rgba(0, 0, 0, 0.05);
+    max-width: 90%;
+}
+
+/* 进度指示器 */
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(203, 213, 225, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 1rem;
+    position: relative;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #0ea5e9);
+    width: 0%;
+    transition: width 0.4s ease;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 1.5s infinite;
+}
+
+/* 文件名称文本 */
+#png-file-name, #zip-file-name {
+    transition: all 0.3s ease;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 页脚美化 */
+.footer-text {
+    font-weight: 700;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    box-shadow: 0 4px 15px -5px rgba(59, 130, 246, 0.25);
+}
+
+.footer-text:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #10b981, #3b82f6);
+    box-shadow: 0 6px 20px -3px rgba(16, 185, 129, 0.3);
+}
+
+@media (max-width: 640px) {
+    .footer-text {
+        font-size: 1rem;
+        padding: 0.4rem 1.2rem;
+    }
+}
+
+/* 新增卡片悬浮效果 */
+main:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+/* 文件上传区图标悬停效果 */
+.file-drop-zone i {
+    transition: all 0.3s ease;
+}
+
+.file-drop-zone:hover i {
+    transform: translateY(-5px);
+}
+
+/* 状态区成功效果 */
+.success-message {
+    animation: fadeIn 0.8s ease, bounce 1s ease 0.5s;
+}
+
+/* 新增背景粒子效果 */
+.bg-particle {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    opacity: 0.1;
+    z-index: -1;
+}
+
+/* 增强按钮光泽效果 */
+.generate-button.ready::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.7s;
+}
+
+.generate-button.ready:hover::after {
+    left: 100%;
+}
+
+/* 增强文件上传区域效果 */
+.file-drop-zone::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05));
+    border-radius: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.file-drop-zone:hover::before {
+    opacity: 1;
+}
+
+/* 增强警告区域动画 */
+.bg-amber-50:hover {
+    background: linear-gradient(135deg, #fffbeb, #fed7aa);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -5px rgba(245, 158, 11, 0.15);
+}
+
+/* 增强工作原理区域 */
+.bg-gradient-to-br.from-slate-50.to-blue-50:hover {
+    background: linear-gradient(135deg, #f1f5f9, #dbeafe);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -5px rgba(59, 130, 246, 0.15);
+}
+
+/* 新增卡片内阴影效果 */
+main {
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.1),
+        inset 0 2px 4px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* 增强拖拽区域反馈 */
+.file-drop-zone.drag-over::after {
+    content: "释放以上传";
+    position: absolute;
+    bottom: 20px;
+    background: rgba(59, 130, 246, 0.9);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease;
+}
+
+/* 优化状态区域 */
+#status-area {
+    min-height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 增强背景粒子效果 */
+@keyframes particleFloat {
+    0% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+    100% { transform: translateY(0) rotate(360deg); }
+}
+
+.bg-particle {
+    animation: particleFloat 15s infinite linear;
+}
+
+/* 新增按钮加载动画 */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* 优化警告图标 */
+[data-lucide="alert-triangle"] {
+    filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.3));
+}
+
+/* 优化文件名称显示 */
+#png-file-name, #zip-file-name {
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.file-drop-zone.file-selected #png-file-name,
+.file-drop-zone.file-selected #zip-file-name {
+    color: #15803d;
+    font-weight: 600;
+}
+
+/* 优化状态文本 */
+#status-text {
+    font-size: 1.05rem;
+}

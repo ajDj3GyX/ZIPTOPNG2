@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNG-ZIP 文件伪装工具</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 text-slate-800 flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8">
+    <!-- 背景装饰元素 -->
+    <div class="absolute inset-0 overflow-hidden -z-10">
+        <div class="absolute top-10 left-10 w-64 h-64 rounded-full bg-blue-100 opacity-30 blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-teal-100 opacity-30 blur-3xl animate-pulse delay-1000"></div>
+        <div class="absolute top-1/3 right-1/4 w-40 h-40 rounded-full bg-indigo-100 opacity-40 blur-3xl animate-pulse delay-500"></div>
+    </div>
+    
+    <div class="w-full max-w-4xl mx-auto">
+        <header class="text-center mb-10">
+            <div class="inline-block p-4 bg-gradient-to-br from-blue-100 to-teal-100 rounded-2xl mb-4 shadow-lg transform transition-all duration-300 hover:scale-105 hover:rotate-3">
+                <div class="bg-white rounded-full p-3 shadow-inner">
+                    <i data-lucide="shield-check" class="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-500 bg-clip-text text-transparent"></i>
+                </div>
+            </div>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-2 relative inline-block group">
+                <span class="bg-gradient-to-r from-blue-600 to-teal-500 bg-clip-text text-transparent">PNG-ZIP 文件伪装工具</span>
+                <span class="absolute -bottom-1 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-teal-400 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></span>
+            </h1>
+            <p class="mt-3 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">一个安全、纯前端的工具，可将ZIP压缩包无缝拼接到PNG图片后方</p>
+            <p class="mt-4 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-teal-400 rounded-full px-4 py-1.5 inline-block shadow-lg animate-pulse">优化：已支持超大文件（>2GB）流式处理</p>
+        </header>
+        
+        <main class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 border border-slate-100/50 transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+            <div class="mb-8 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl p-6 border border-slate-100 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-blue-100 rounded-full -mr-8 -mt-8 opacity-30"></div>
+                <h2 class="text-xl font-semibold text-slate-800 mb-3 flex items-center">
+                    <i data-lucide="info" class="w-5 h-5 mr-2 text-blue-500"></i>
+                    工作原理
+                </h2>
+                <p class="text-slate-600 leading-relaxed relative z-10">
+                    本工具利用了文件格式的解析特性。图片查看器会从文件头部读取PNG数据，遇到结束符后停止，因此图片能正常显示。而解压缩软件会扫描整个文件寻找ZIP的起始标记，从而忽略前方的图片数据，正确解压文件。这是一种巧妙的二进制拼接技术，所有操作均在您的浏览器中完成，确保文件不会上传至任何服务器。
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <!-- PNG Upload -->
+                <div class="flex flex-col">
+                    <label class="font-semibold text-slate-700 mb-2 flex items-center">
+                        <span class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 text-white flex items-center justify-center mr-2 text-xs">1</span>
+                        上传 PNG 封面图片
+                    </label>
+                    <div id="png-drop-zone" class="file-drop-zone">
+                        <div class="flex flex-col items-center justify-center text-center relative z-10">
+                            <i data-lucide="image-up" class="w-12 h-12 bg-gradient-to-br from-blue-400 to-teal-300 bg-clip-text text-transparent mb-3 transition-transform duration-300 hover:scale-110"></i>
+                            <p id="png-file-name" class="text-slate-500">拖拽文件至此，或点击选择</p>
+                            <p class="text-xs text-slate-400 mt-1">请选择一个 .png 文件</p>
+                        </div>
+                        <input type="file" id="png-input" accept="image/png" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                    </div>
+                </div>
+                <!-- ZIP Upload -->
+                <div class="flex flex-col">
+                    <label class="font-semibold text-slate-700 mb-2 flex items-center">
+                        <span class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 text-white flex items-center justify-center mr-2 text-xs">2</span>
+                        上传 ZIP 压缩包
+                    </label>
+                    <div id="zip-drop-zone" class="file-drop-zone">
+                        <div class="flex flex-col items-center justify-center text-center relative z-10">
+                            <i data-lucide="file-zip" class="w-12 h-12 bg-gradient-to-br from-blue-400 to-teal-300 bg-clip-text text-transparent mb-3 transition-transform duration-300 hover:scale-110"></i>
+                            <p id="zip-file-name" class="text-slate-500">拖拽文件至此，或点击选择</p>
+                            <p class="text-xs text-slate-400 mt-1">请选择一个 .zip 文件</p>
+                        </div>
+                        <input type="file" id="zip-input" accept=".zip,application/zip,application/x-zip-compressed" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-center mb-8">
+                <button id="generate-btn" class="generate-button">
+                    <i data-lucide="wand-sparkles" class="w-5 h-5 mr-2"></i>
+                    开始合成
+                </button>
+            </div>
+            
+            <div id="status-area" class="min-h-[120px] flex items-center justify-center text-center p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-blue-50 border border-slate-200/50 transition-all duration-300">
+                <p id="status-text" class="text-slate-500">请先上传两个所需文件。</p>
+            </div>
+            
+            <!-- Warning Section -->
+            <div class="mt-12 p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/50 relative overflow-hidden shadow-sm">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-amber-100 rounded-full -mr-12 -mt-12 opacity-30"></div>
+                <div class="absolute bottom-0 left-0 w-16 h-16 bg-amber-100 rounded-full -ml-8 -mb-8 opacity-30"></div>
+                <h3 class="font-bold text-lg text-amber-800 flex items-center mb-3 relative z-10">
+                    <i data-lucide="alert-triangle" class="w-6 h-6 mr-2 text-amber-500"></i>
+                    重要风险与注意事项
+                </h3>
+                <ul class="space-y-3 text-amber-700 text-sm relative z-10">
+                    <li class="flex">
+                        <span class="font-semibold min-w-[120px]">文件损坏风险:</span> 
+                        <span class="flex-1">任何文件操作都有极小的失败风险。强烈建议在操作前备份您的原始图片和ZIP文件。</span>
+                    </li>
+                    <li class="flex">
+                        <span class="font-semibold min-w-[120px]">杀毒软件警告:</span> 
+                        <span class="flex-1">某些恶意软件会利用此技术隐藏自身。因此，一些敏感的杀毒软件可能会将生成的图片标记为可疑文件。</span>
+                    </li>
+                    <li class="flex">
+                        <span class="font-semibold min-w-[120px]">在线工具隐私问题:</span> 
+                        <span class="flex-1">本工具是纯前端操作，安全可靠。但请警惕其他需要上传文件的网站，它们可能存在数据泄露风险。</span>
+                    </li>
+                    <li class="flex">
+                        <span class="font-semibold min-w-[120px]">适用性限制:</span> 
+                        <span class="flex-1">在某些平台（如社交媒体）上传此图片时，平台可能会对其进行压缩处理，这会破坏附加的ZIP数据，导致伪装失效。</span>
+                    </li>
+                </ul>
+            </div>
+        </main>
+        
+        <footer class="text-center mt-10 text-slate-500 text-sm">
+            <p class="flex items-center justify-center gap-1.5 footer-text">
+                <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i>
+                青圣出品，必属精品
+            </p>
+        </footer>
+    </div>
+    <script src="script.js" type="module"></script>
+</body>
+</html>
